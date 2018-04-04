@@ -179,10 +179,33 @@ vidaUtil_4 = 3625
       I_6 = 1 - D_6
       I_6 # 0.366666667
       
-        
+
+# Exercício 7
       
       
-    
+    # Alínea a)
+      
+      # Em 1000 horas falharam 0.5% dos carburadores testados, logo sobreviveram 99.5% dos carburadores testados. Deste modo R(1000) = 1 - F(1000) = 1 - 0.005 = 0.995
+      # Logo, a probabilidade de o equipamento funcionar, sem falhas, durante 1000 horas, é de 99.5%
+      
+    # Alínea b)
+      
+      Na_7 = 0.005 * 200
+      Na_7 # = 1
+      # Resposta: 1 carburador
+      
+      
+    # Alínea c)
+      
+      # A função de fiabilidade R(t) - probabilidade de sobrevivência no intante t - é definida pela expressão:
+      #   R(t) = exp(-lambda * t) = exp(-t / MTTF)
+      # Como R(1000) = 0.995, tem-se que: 0.995 = exp(- 1000 / MTTF) <=> MTTF = - 1000 / log(0.995)
+      
+      MTTF_7 = - 1000 / log(0.995) # atenção: log = ln
+      MTTF_7 # 199499.6 horas
+      
+      RMTTF_7 = exp(-MTTF_7 / MTTF_7)
+      RMTTF_7 # = 0.3678794 (36.8%)
     
     
     
