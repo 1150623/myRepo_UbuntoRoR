@@ -7,7 +7,7 @@
 #Sexo:
   MASCULINO = "Masculino"
   FEMININO = "Feminino"
-  SEXO_NAO_DEFINIDO = "Prefiro não dizer"
+  SEXO_NAO_DEFINIDO = "Prefiro nao dizer"
 
 #Importação ficheiro .csv com os dados do inquerito.
 
