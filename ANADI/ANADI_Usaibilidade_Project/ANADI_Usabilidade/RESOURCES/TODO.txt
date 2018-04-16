@@ -1,0 +1,53 @@
+
+
+==================================================================================================
+									ANADI - Usabilidade	
+==================================================================================================
+
+É preciso fazer gráficos e analisar os seguintes casos:
+
+--> Pessoas que usam x Pessoas que não usam
+	-> Simples
+	-> Por género
+	-> Por faxa etaria
+
+--> Razões mais frequentes para a não utilização
+	-> Simples
+	-> Por género
+	
+--> Satisfação dos utilizadores (Muito ou Pouco satisfeito)
+	-> Simples
+	-> Por género
+	-> Por idades
+	-> Por plataforma
+	-> Relação a número de horas diárias
+	
+--> Facilidade de Uso (Muito Intuitivo x Muito Complicado)
+	-> Simples
+	-> Por idades
+	-> Relação aos anos de utilização
+	-> Plataforma
+	
+(Fazer análise de ituitividade + satisfação para todas as hipoteses anteriores)
+
+--> Plataforma mais utilizada para aceder ao firefox
+	-> Simples
+	-> Por idades
+	-> Relação a número de horas diarias
+	-> Relação aos anos de utilização
+	-> Por género
+	
+--> Funcionalidades preferidas
+	-> Simples
+	-> Por idades
+	-> Por género
+	
+	
+==================================================================================================
+											ATENÇÃO
+==================================================================================================
+
+Para análisar os gráficos, é necessário testas às nossas conclusões com testes de hipoteses.
+(ex: Com que confiança é que podemos dizer que as mulheres preferem usar o firefox para ir as redes sociais)
+
+	
