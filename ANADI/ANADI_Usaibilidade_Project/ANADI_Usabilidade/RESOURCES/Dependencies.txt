@@ -1,0 +1,7 @@
+
+Dependências/Packages a instalar:
+
+-> Reshape2
+-> ggplot2
+-> readr
+-> plotply
