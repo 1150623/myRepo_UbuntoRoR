@@ -9,15 +9,15 @@
   FEMININO = "Feminino"
   SEXO_NAO_DEFINIDO = "Prefiro nao dizer"
 
-#Importação ficheiro .csv com os dados do inquerito.
+#Importacao ficheiro .csv com os dados do inquerito.
 
 
 library(readr)
-dados <- read_csv("./RESOURCES/Inquérito ANADI.csv")
+dados <- read_csv("./RESOURCES/Inquerito ANADI.csv")
 View(dados)
 attach(dados)
 
-# Obtencao dados do Género dos inqueridos:
+# Obtencao dados do Genero dos inqueridos:
 nr_masculino = 0
 nr_feminino = 0
 nr_SexoNaoDefinido = 0
@@ -39,10 +39,10 @@ for(type in Sexo){
 # definir valores do pie chart
 graph_sexos_slices = c(nr_masculino, nr_feminino, nr_SexoNaoDefinido)
 graph_sexos_labels = c(MASCULINO, FEMININO, SEXO_NAO_DEFINIDO)
-#extra adicionar percentagens às labels
+#extra adicionar percentagens as labels
 percentagens = round(graph_sexos_slices / sum(graph_sexos_slices) * 100)
 graph_sexos_labels = paste(graph_sexos_labels, percentagens)
 graph_sexos_labels = paste(graph_sexos_labels, "%", sep="")
-#desenhar gráfico (pie chart)
-pie(graph_sexos_slices, labels=graph_sexos_labels, col=rainbow(length(graph_sexos_labels)), main = "Género dos Inqueridos")
+#desenhar grafico (pie chart)
+pie(graph_sexos_slices, labels=graph_sexos_labels, col=rainbow(length(graph_sexos_labels)), main = "Genero dos Inqueridos")
   
