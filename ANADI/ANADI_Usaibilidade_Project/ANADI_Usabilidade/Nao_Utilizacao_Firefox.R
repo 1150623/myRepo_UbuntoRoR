@@ -18,7 +18,7 @@ NAO_UTILIZA_APP = "Nao"
 library(ggplot2)
 library(plotly)
 library(readr)
-dados <- read_csv("./RESOURCES/Inquerito ANADI.csv")
+dados <- read_csv("./RESOURCES/Inquerito_ANADI.csv")
 #View(dados)
 attach(dados)
 # ----------------------------------------------------
@@ -104,10 +104,10 @@ labels_ <- list(
 )
 data <- list(labels_)
 layout <- list(title = "Utilizadores Por Genero")
-p <- plot_ly()
-p <- add_trace(p, labels=labels_$labels, type=labels_$type, values=labels_$values)
-p <- layout(p, title=layout$title)
-p
+pie <- plot_ly()
+pie <- add_trace(p, labels=labels_$labels, type=labels_$type, values=labels_$values)
+pie <- layout(p, title=layout$title)
+pie
 # ---------------------
 #  Grafico Por Generos
 # ---------------------
@@ -120,9 +120,9 @@ mascValues = c(nr_masc_nao_utiliza, nr_masc_utiliza)
 femValues = c(nr_fem_nao_utiliza, nr_fem_utiliza)
 data <- data.frame(Utilizacao, mascValues, femValues)
 
-p2 <- plot_ly(data, x = ~Utilizacao, y = ~mascValues, type = 'bar', name = 'MASCULINO') %>%
+dualBar <- plot_ly(data, x = ~Utilizacao, y = ~mascValues, type = 'bar', name = 'MASCULINO') %>%
   add_trace(y = ~femValues, name = 'FEMININO') %>%
   layout(yaxis = list(title = 'Quantidade'), barmode = 'group')
-p2
+dualBar
 
 
