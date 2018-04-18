@@ -7,9 +7,9 @@
 É preciso fazer gráficos e analisar os seguintes casos:
 
 --> Pessoas que usam x Pessoas que não usam
-	-> Simples
-	-> Por género
-	-> Por faxa etaria
+	-> [DONE] Simples
+	-> [DONE] Por género
+	-> [DONE] Por faxa etaria
 
 --> Razões mais frequentes para a não utilização
 	-> Simples
