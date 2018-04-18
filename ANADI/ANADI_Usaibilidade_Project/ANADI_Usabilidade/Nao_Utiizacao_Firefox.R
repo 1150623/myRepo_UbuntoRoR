@@ -35,7 +35,7 @@ col1 = 2; # Genero
 col5 = 5; # Utilizacao
 #71 é o número total (nr_Total) de inqueridos
 M_dados = dados[c(1:nr_Total), c(col1, col5)]
-View(M_dados)
+#View(M_dados)
 
 # M_dados[ INQUIRIDO , COLUNA ] -> Se COLUNA for 1, retorna Genero, se for 2 retorna Utilizacao
 
@@ -53,7 +53,8 @@ while(inquirido <= nr_Total){
     }else{
       nr_fem_nao_utiliza = nr_fem_nao_utiliza + 1
     }
-  }else if(M_dados[inquirido, 1] == MASCULINO){
+  }
+  if(M_dados[inquirido, 1] == MASCULINO){
     # Genero = MASCULINO
     if(M_dados[inquirido, 2] == UTILIZA_APP){
       nr_masc_utiliza = nr_masc_utiliza + 1
@@ -61,7 +62,19 @@ while(inquirido <= nr_Total){
       nr_masc_nao_utiliza = nr_masc_nao_utiliza + 1
     }
   }
+  if(M_dados[inquirido, 1] == SEXO_NAO_DEFINIDO){
+    # Utilizadores sem restrição de sexo
+    if(M_dados[inquirido, 2] == UTILIZA_APP){
+      nr_utilizadores = nr_utilizadores + 1
+    }else{
+      nr_naoUtilizadores = nr_naoUtilizadores + 1
+    }
+  }else{
+    
+  }
   inquirido = inquirido + 1
+  
+  
 }
 
 nr_feminino = nr_fem_nao_utiliza + nr_fem_utiliza
