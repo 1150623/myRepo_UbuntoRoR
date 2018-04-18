@@ -18,8 +18,7 @@
 --> Satisfação dos utilizadores (Muito ou Pouco satisfeito)
 	-> Simples
 	-> Por género
-	-> Por idades
-	-> Por plataforma
+	-> [DONE] Por plataforma
 	-> Relação a número de horas diárias
 	
 --> Facilidade de Uso (Muito Intuitivo x Muito Complicado)
