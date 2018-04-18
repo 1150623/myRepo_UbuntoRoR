@@ -13,7 +13,7 @@
 
 
 library(readr)
-dados <- read_csv("./RESOURCES/Inquerito ANADI.csv")
+dados <- read_csv("./RESOURCES/Inquerito_ANADI.csv")
 View(dados)
 attach(dados)
 
