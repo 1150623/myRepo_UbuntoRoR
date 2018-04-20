@@ -1,4 +1,4 @@
-Servidor,TipoLigacao,Data,HoraInicio,HoraFim,Duracao
+Servidor,Protocolo,Data,HoraInicio,HoraFim,Duracao
 vsrv11,SOFTETHER,2016-12-25,08:38,10:43,125
 vsrv8,PPTP,2016-12-25,11:43,13:04,81
 vsrv17,SSTP,2016-12-25,12:55,13:57,62
