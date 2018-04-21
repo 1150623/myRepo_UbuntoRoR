@@ -107,3 +107,15 @@ pie <- plot_ly()
 pie <- add_trace(pie, labels=labels_$labels, type=labels_$type, values=labels_$values)
 pie <- layout(pie, title=layout$title,showlegend = TRUE)
 pie
+
+# grafo de respostas por genero
+
+Values_masc = respostasMasculino
+Values_fem = respostasFeminino
+
+data <- data.frame(respostas, Values_masc, Values_fem)
+data
+multi <- plot_ly(data, x = respostas, y = Values_masc, type = 'bar', name = 'MASCULINO') %>%
+  add_trace(y = Values_fem, name = 'FEMININO') %>%
+  layout(yaxis = list(title = 'Motivos de não utilização por genero'), xaxis = list(respostas),barmode = 'group')
+multi
