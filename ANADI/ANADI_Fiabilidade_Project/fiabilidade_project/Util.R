@@ -4,7 +4,7 @@
 library(readr)
 library(lubridate)
 
-PARTNAME = toString("part_ag")
+PARTNAME = toString("part_aj")
 
 
 INICIAL_FILE = toString("/Resources/VPN_SESSIONS_PARTS/")
@@ -78,9 +78,9 @@ subtractDate <- function (date1, date2){
   # Retorna resultado em minutos
   #return(as.numeric(difftime(date1,date2)) * 60)
   
-  diff=toDate(date1)-toDate(date2)
-  min1 = as.numeric(getHour(toDate(date1))) * 60 + as.numeric(getMinuts(toDate(date1)))
-  min2 = as.numeric(getHour(toDate(date2))) * 60 + as.numeric(getMinuts(toDate(date2)))
+  diff=toDate(toString(date1))-toDate(toString(date2))
+  min1 = as.numeric(getHour(toDate(toString(date1)))) * 60 + as.numeric(getMinuts(toDate(toString(date1))))
+  min2 = as.numeric(getHour(toDate(toString(date2)))) * 60 + as.numeric(getMinuts(toDate(toString(date2))))
   
   if(is.na(min1) || is.na(min2)){
     timediff = 0
@@ -95,7 +95,7 @@ subtractDate <- function (date1, date2){
 
 incrementDate <- function (date, minut){
   # Adiciona 'minuts' minutos a 'date'
-  result = toDate(date) + minutes(minut)
+  result = toDate(toString(date)) + minutes(minut)
   return(result)
 }
 
@@ -138,7 +138,7 @@ joinDateTime <- function(date,time){
 
 toDate <- function(date){
   # Combines a 'date' and a 'time' string into a date+time type
-  return(strptime(date, format = "%Y-%m-%d %H:%M", tz = "GMT"))
+  return(as.POSIXct(date))
 }
 
 
@@ -149,7 +149,7 @@ compareDate <-function(arg1, arg2){
   sub = as.numeric(subtractDate(arg1, arg2))
   #print(sub)
   returnValue = 0 # DateA == DateB, retorna 0
-  #if(is.na(sub)){
+  if(is.na(sub)){
     #print("SUB IS 'NA'")
     #print("arg1")
     #print(arg1)
@@ -157,13 +157,13 @@ compareDate <-function(arg1, arg2){
     #print(arg2)
     #print("sub")
     #print(sub)
-  #}
+  }
   if(sub < 0){
     returnValue = -1
   }else 
-  if(sub > 0){
-    returnValue = 1
-  }
+    if(sub > 0){
+      returnValue = 1
+    }
   return(returnValue)
 }
 
@@ -199,4 +199,122 @@ concatTwoDates_toString <- function(date1, date2){
   string = paste(string, s2, sep=":")
   string = paste(string, "txt", sep=".")
   return(string)
+}
+
+nr_sessoes_simultaneo <- function(input, lastLine, data){
+  startAt = lastLine
+  #(0 - Se receber um parametro válido como 'lastLine', iniciar a pesquisa nessa linha)
+  #print("PASSO 0...")
+  max = lastLine + MAX_SIMULTANEO
+  if(max>nrow(input)){
+    max = nrow(input)
+  }
+  data = toDate(data)
+  values1 = input[c(lastLine:max), c(3:5)]
+  
+  # 1 - Encontrar a primeira data (dia+HORA_FIM) que seja maior que a recebida por parametro.
+  #     Assim temos a certeza que não queremos as sessões anteriores por acabarem antes da hora pretendida.
+  count = 1
+  end = nrow(values1)
+  while(count <= end){
+    
+    if(is.na(values1[[count, 2]])){
+      #print("IS NA")
+      if(!is.na(values1[[count, 1]])){
+        #print("INCREMENTING STARTING ON INICIAL DATE")
+        aux = incrementDate(values1[[count, 1]], values1[[count, 3]])
+      }
+    }else{
+      aux = toDate(toString(values1[[count, 2]]))
+    }
+    
+    if(compareDate(data, aux) == -1 || compareDate(aux, data) == 0){# data >= aux
+      startAt = count
+      print(startAt)
+      break;
+    }
+    count = count + 1
+  }
+  #print("startAt")
+  #print(startAt)
+  #print("max")
+  #print(max)
+  values = values1[c(startAt:nrow(values1)), c(1,3)]
+  
+  # 2 - Da primeira data maior para a frente, enquanto as data+HORA_INICIO forem menores que a data recebida por parametro (e duracao != 0),
+  #     incrementamos um contador (que representa o numero de sessões em simultaneo)
+  nr_sess = 0
+  i = 1
+  end = nrow(values)
+  #View(values1)
+  #View(values)
+  while(i <= end){
+    aux1 = toDate(values[[i, 1]])#Coluna Data_Hora_Ini
+    duracao = as.numeric(values[[i,2]])#duracao da sessao COLUNA DURACAO
+    #if(duracao == 125){View(values)}
+    #print(duracao)
+    #print("DataAux1")
+    #print(aux1)
+    #print("DataRecebida")
+    #print(data)
+    #print("compare: (data, aux1)")
+    #print(compareDate(data, aux1))
+    #print("1condicao")
+    #print((compareDate(data,aux1) == 1 || compareDate(data,aux1) == 0))
+    #print("2condicao")
+    #print(isValidConnection(duracao))
+    if((compareDate(data,aux1) == 1 || compareDate(data,aux1) == 0) && isValidConnection(duracao)){ # (data < aux1) AND (duracao != 0 -> FALHA)
+      nr_sess = nr_sess + 1
+      write(paste(toString(toDate(data), toString(toDate(aux1)))), file= "novoFile.txt", append = TRUE,sep = ",")
+      #print("ENTROU AQUI!! -> incrementou nr_sess")
+      if(nr_sess >= MAX_SIMULTANEO){
+        MAX_SIMULTANEO <-nr_sess
+      }
+    }else if(compareDate(data, aux1) == -1){
+      break;
+    }
+    i = i + 1
+  }
+  
+  # 3 - Quando acabar a pesquisa, retornar esse número e o número da linha do ficheiro da primeira data+HORA_INICIO encontrada (com duracao != 0, senão retorna a seguinte)
+  while(!isValidConnection(values1[[startAt,3]])){
+    startAt = startAt + 1
+  }
+  
+  return(c(nr_sess, startAt))
+} 
+findSessoesSimultaneoInFile<- function(input, startDate, deleteOld){
+  fileName = concatTwoDates_toString(input[[1,3]],input[[nrow(input),3]])
+  print(fileName)
+  count = 0
+  lastLine = 1
+  dataInicial = toDate(toString(startDate))
+  lastDate = toDate(toString(input[[nrow(input), 3]]))
+  if(deleteOld){
+    write("", file = fileName, append = FALSE, sep = " ")
+  }
+  ending = subtractDate(lastDate, dataInicial)
+  #print("ending:")
+  #print(ending)
+  print("DataInicial:")
+  print(dataInicial)
+  while(count <= ending){
+    
+    
+    dataAux <- incrementDate(dataInicial, count)
+    
+    print(dataAux)
+    
+    #Chama calculo de sessoes simultaneas
+    result = nr_sessoes_simultaneo(input, lastLine, dataAux)
+    
+    nr_sessoes_encontradas  = result[[1]]
+    print(paste("sessoes ", nr_sessoes_encontradas, sep = "= "))
+    lastLine = result[[2]]
+    
+    texto = paste(nr_sessoes_encontradas, dataAux, sep = "\",\"")
+    write(paste(paste("\"", texto, sep = ""), "\"", sep = ""), file = fileName, append = TRUE, sep = " ")
+    
+    count = count + 1 
+  }
 }
