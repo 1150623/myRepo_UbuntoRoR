@@ -2,6 +2,47 @@
 # PACKAGES IMPORTS
 
 library(readr)
+library(lubridate)
+
+PARTNAME = toString("part_ag")
+
+
+INICIAL_FILE = toString("/Resources/VPN_SESSIONS_PARTS/")
+INICIAL_FILE = paste(INICIAL_FILE, PARTNAME, sep="")
+INICIAL_FILE = paste(INICIAL_FILE, "txt", sep=".")
+
+MODIFIED_FILE = toString("./Resources/VPN_SESSIONS_PARTS/")
+MODIFIED_FILE = paste(MODIFIED_FILE, PARTNAME, sep="")
+MODIFIED_FILE = paste(MODIFIED_FILE, "_modified_file.txt", sep="")
+
+
+Data_Hora_End_FILE = toString("./Resources/VPN_SESSIONS_PARTS/")
+Data_Hora_End_FILE = paste(Data_Hora_End_FILE, PARTNAME, sep="")
+Data_Hora_End_FILE = paste(Data_Hora_End_FILE, "_data_hora_end.txt", sep="")
+
+
+Data_Hora_Ini_FILE = toString("./Resources/VPN_SESSIONS_PARTS/")
+Data_Hora_Ini_FILE = paste(Data_Hora_Ini_FILE, PARTNAME, sep="")
+Data_Hora_Ini_FILE = paste(Data_Hora_Ini_FILE, "_data_hora_ini.txt", sep="")
+
+
+Prot_FILE <- toString("./Resources/VPN_SESSIONS_PARTS/")
+Prot_FILE = paste(Prot_FILE, PARTNAME, sep="")
+Prot_FILE = paste(Prot_FILE, "_prot.txt", sep="")
+
+
+Serv_FILE <- toString("./Resources/VPN_SESSIONS_PARTS/")
+Serv_FILE = paste(Serv_FILE, PARTNAME, sep="")
+Serv_FILE = paste(Serv_FILE, "_serv.txt", sep="")
+
+
+Duracao_FILE <- toString("./Resources/VPN_SESSIONS_PARTS/")
+Duracao_FILE = paste(Duracao_FILE, PARTNAME, sep="")
+Duracao_FILE = paste(Duracao_FILE, "_duracao.txt", sep="")
+
+OUTPUT_FILE_SESSOES_SIMULTANEAS = toString("./Resources/VPN_SESSIONS_PARTS/")
+OUTPUT_FILE_SESSOES_SIMULTANEAS = paste(OUTPUT_FILE_SESSOES_SIMULTANEAS, PARTNAME, sep = "")
+OUTPUT_FILE_SESSOES_SIMULTANEAS = paste(OUTPUT_FILE_SESSOES_SIMULTANEAS, "_sess_simultaneas.txt", sep = "")
 
 
 #VARIAVEIS GLOBAIS
@@ -17,9 +58,10 @@ COL_HORA_FIM = 5
 COL_DURACAO = 6
 
 DURACAO_FALHA = 0
-MAX_SIMULTANEO = 5000
+MAX_SIMULTANEO = 260
 
 # UTIL FUNCTIONS
+
 isValidConnection <- function(duracao){
   # Verifica se uma conneccao e valida (se duracao <= 1, e uma falha), ou seja, duracao > 1
   return(duracao > 1)
@@ -27,19 +69,34 @@ isValidConnection <- function(duracao){
 
 calcMTBF <-function(vetorInicioFalhas){
   #Calculo MTBF (Mean Time Between Failure)
-  for(var in vetorInicioFalhas[]){
-    
+  for(var in vetorInicioFalhas){
+    #TODO
   }
 }
 
 subtractDate <- function (date1, date2){
   # Retorna resultado em minutos
-  return(as.numeric(difftime(date1,date2)) * 60)
+  #return(as.numeric(difftime(date1,date2)) * 60)
+  
+  diff=toDate(date1)-toDate(date2)
+  min1 = as.numeric(getHour(toDate(date1))) * 60 + as.numeric(getMinuts(toDate(date1)))
+  min2 = as.numeric(getHour(toDate(date2))) * 60 + as.numeric(getMinuts(toDate(date2)))
+  
+  if(is.na(min1) || is.na(min2)){
+    timediff = 0
+  }else{
+    timediff = min1-min2
+  }
+  
+  diffNum=((as.numeric(diff)*24*60)+ timediff)
+  
+  return(diffNum)
 }
 
-incrementDate <- function (date, minuts){
+incrementDate <- function (date, minut){
   # Adiciona 'minuts' minutos a 'date'
-  return(date + minuts * 60)
+  result = toDate(date) + minutes(minut)
+  return(result)
 }
 
 calcTaxaDeFalha <- function(dados, inicio, fim, nr_sessoes){
@@ -79,38 +136,67 @@ joinDateTime <- function(date,time){
   return(strptime(paste(date, time, sep= " "), format = "%Y-%m-%d %H:%M", tz = "GMT"))
 }
 
-compareDate <-function(dateA, dateB){
-  #print(paste(dateA))
-  #print(paste(dateB))
-  diff = subtractDate(dateA, dateB)
-  #print(diff)
-  returnValue = 0 # DateA = DateB
-  if(diff < 0){
-    #DateB > DateA
-    returnValue = -1
-  }else if(diff > 0){
-    #DateA > DateB
-    returnValue = 1
-  }
-  
-  return(returnValue)
+toDate <- function(date){
+  # Combines a 'date' and a 'time' string into a date+time type
+  return(strptime(date, format = "%Y-%m-%d %H:%M", tz = "GMT"))
 }
 
 
-#MOVE TO MAIN:
-nr_sessoes_simultaneo <- function(input, lastLine, data){
-  max = lastLine + MAX_SIMULTANEO
-  if(max>qtd_amostra){
-    max = qtd_amostra
+compareDate <-function(arg1, arg2){
+  #print("---COMPARE----")
+  #print(arg1)
+  #print(arg2)
+  sub = as.numeric(subtractDate(arg1, arg2))
+  #print(sub)
+  returnValue = 0 # DateA == DateB, retorna 0
+  #if(is.na(sub)){
+    #print("SUB IS 'NA'")
+    #print("arg1")
+    #print(arg1)
+    #print("arg2")
+    #print(arg2)
+    #print("sub")
+    #print(sub)
+  #}
+  if(sub < 0){
+    returnValue = -1
+  }else 
+  if(sub > 0){
+    returnValue = 1
   }
-  values = input[lastLine:max]
+  return(returnValue)
+}
+
+concatTwoDates_toString <- function(date1, date2){
   
+  y1 = toString(getYear(toDate(date1)))
+  m1 = toString(getMonth(toDate(date1)))
+  d1 = toString(getDay(toDate(date1)))
+  h1 = toString(getHour(toDate(date1)))
+  mn1 = toString(getMinuts(toDate(date1)))
+  s1 = toString(getSeconds(toDate(date1)))
   
-  #(0 - Se receber um parametro válido como 'lastLine', iniciar a pesquisa nessa linha)
-  # 1 - Encontrar a primeira data (dia+HORA_FIM) que seja menor que a recebida por parametro.
-  #     Assim temos a certeza que não queremos as sessões anteriores por acabaram antes da hora pretendida.
-  # 2 - Da primeira data maior para a frente, enquanto as data+HORA_INICIO forem menores que a data recebida por parametro (e duracao != 0),
-  #     incrementamos um contador (que representa o numero de sessões em simultaneo)
-  # 3 - Quando acabar a pesquisa, retornar esse número e o número da linha do ficheiro da primeira data+HORA_INICIO encontrada (com duracao != 0, senão retorna a seguinte)
+  y2 = toString(getYear(toDate(date2)))
+  m2 = toString(getMonth(toDate(date2)))
+  d2 = toString(getDay(toDate(date2)))
+  h2 = toString(getHour(toDate(date2)))
+  mn2 = toString(getMinuts(toDate(date2)))
+  s2 = toString(getSeconds(toDate(date2)))
   
-} 
+  string = paste("./Resources/VPN_SESSIONS_PARTS/", PARTNAME, sep="")
+  string = paste(string, "_De_", y1, sep="")
+  string = paste(string, m1, sep="-")
+  string = paste(string, d1, sep="-")
+  string = paste(string, h1, sep="_")
+  string = paste(string, mn1, sep=":")
+  string = paste(string, s1, sep=":")
+  string = paste(string, "__Ate_", sep="")
+  string = paste(string, y2, sep="")
+  string = paste(string, m2, sep="-")
+  string = paste(string, d2, sep="-")
+  string = paste(string, h2, sep="_")
+  string = paste(string, mn2, sep=":")
+  string = paste(string, s2, sep=":")
+  string = paste(string, "txt", sep=".")
+  return(string)
+}
